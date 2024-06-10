@@ -43,7 +43,6 @@ pipeline {
 		    wget --spider localhost:5000
 		    docker stop test-bee
 		    docker rm test-bee
-		    docker rmi -f ${image}:${BUILD_NUMBER}
 		    exit
                     EOF'''
                 }
@@ -57,7 +56,7 @@ pipeline {
                 sshagent([credential]) {
                     sh '''ssh -o StrictHostKeyChecking=no ${server} << EOF
                     sed -i '22c\\    image: ${image}:${BUILD_NUMBER}' docker-compose.yaml
-                    docker compose up -d 
+                    docker compose up -d backend 
                     cd ${directory}
                     exit
                     EOF'''
@@ -70,6 +69,7 @@ pipeline {
                     sh '''ssh -o StrictHostKeyChecking=no ${server} << EOF 
                     cd ${directory}
                     docker push ${image}:${BUILD_NUMBER}
+		    docker rmi -f ${image}:${BUILD_NUMBER}
                     exit
                     EOF'''
                 }
