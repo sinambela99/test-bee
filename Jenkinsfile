@@ -21,24 +21,6 @@ pipeline {
                 }
             }
         }
-        stage("SonarQube Analysis") {
-            environment {
-                SCANNER_HOME = tool 'sonarqube'  // Pastikan nama alat di konfigurasi alat Jenkins adalah 'sonarqube'
-            }
-            steps {
-                script {
-                    withSonarQubeEnv('ian') {  // Pastikan nama instalasi di konfigurasi sistem Jenkins adalah 'ian'
-                        sh '''${SCANNER_HOME}/bin/sonar-scanner \
-                        -Dsonar.projectKey=ian \
-                        -Dsonar.token=775a041b80fb88e526338c32b2466d76269269b4 \
-                        -Dsonar.sources=. \
-                        -Dsonar.host.url=http://103.175.219.100:9000/ \
-                        -Dsonar.inclusions=index.js \
-                        -Dsonar.test.inclusions=index.test.js'''
-                    }
-                }
-            }
-        }
         stage('Building application'){
             steps {
                 sshagent([credential]) {
