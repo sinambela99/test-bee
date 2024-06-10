@@ -28,7 +28,7 @@ pipeline {
                     cd ${directory}
                     docker compose  up -d database
                     docker build -t ${image}:${BUILD_NUMBER} .
-                    exit
+                    exit 
                     EOF'''
                 }
             }
@@ -40,6 +40,7 @@ pipeline {
                     cd ${directory}
 		    docker stop test-bee
                     docker run --name test-bee -p 5000:5000 -d ${image}:${BUILD_NUMBER}
+		    curl localhost:5000
 		    exit
                     EOF'''
                 }
