@@ -38,8 +38,13 @@ pipeline {
                 sshagent([credential]) {
                     sh '''ssh -o StrictHostKeyChecking=no ${server} << EOF 
                     cd ${directory}
+		    docker stop test-bee
                     docker run --name test-bee -p 5000:5000 -d ${image}:${BUILD_NUMBER}
-                    wget --no-verbose --tries=1 --spider localhost:5000
+                    if wget --no-verbose --tries=1 --spider localhost:5000; then
+                        echo "Application is running"
+                    else
+                        echo "Application is not running"
+                    exit 1
                     docker stop test_bee
                     docker rm test_bee
                     exit
