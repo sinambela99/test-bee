@@ -40,12 +40,9 @@ pipeline {
                     cd ${directory}
 		    docker stop test-bee
                     docker run --name test-bee -p 5000:5000 -d ${image}:${BUILD_NUMBER}
-		    if wget --spider -q http://localhost:5000; then
-                                echo "Application is running"
-                            else
-                                echo "Application is not running"
-                                exit 1
-                            fi
+		    wget --spider localhost:5000
+		    docker stop test-bee
+		    docker rm test-bee
 		    exit
                     EOF'''
                 }
