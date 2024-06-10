@@ -21,6 +21,17 @@ pipeline {
                 }
             }
         }
+        stage('Sonarqube analyze'){
+            steps {
+                sshagent([credential]) {
+                    sh '''ssh -o StrictHostKeyChecking=no ${server} << EOF
+                    npm install --save-dev sonarqube-scanner
+		    npm run sonar
+                    exit
+                    EOF'''
+                }
+            }
+        }
         stage('Building application'){
             steps {
                 sshagent([credential]) {
