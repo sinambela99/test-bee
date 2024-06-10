@@ -7,6 +7,9 @@ pipeline {
         branch = 'main'
         service = 'backend'
         image = 'iansinambela/be'
+	SONARQUBE_URL = 'http://103.175.219.100:9000'
+        SONARQUBE_TOKEN = '775a041b80fb88e526338c32b2466d76269269b4'
+        SONARQUBE_PROJECT_KEY = 'ian'
     }
     stages {
         stage('Pull code dari repository'){
@@ -18,6 +21,22 @@ pipeline {
                     git pull origin ${branch}
                     exit
                     EOF'''
+                }
+            }
+        }
+        stage('SonarQube Analysis') {
+            environment {
+                SCANNER_HOME = tool 'sonarqube'  // Pastikan nama alat di konfigurasi alat Jenkins adalah 'sonarqube'
+            }
+            steps {
+                script {
+                    withSonarQubeEnv('ian') {  // Pastikan nama instalasi di konfigurasi sistem Jenkins adalah 'ian'
+                        sh '''${SCANNER_HOME}/bin/sonar-scanner \
+                        -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
+                        -Dsonar.token=${SONARQUBE_TOKEN} \
+                        -Dsonar.sources=${directory} \
+                        -Dsonar.host.url=${SONARQUBE_URL}'''
+                    }
                 }
             }
         }
