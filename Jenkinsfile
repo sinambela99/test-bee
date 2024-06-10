@@ -25,8 +25,8 @@ pipeline {
             steps {
                 sshagent([credential]) {
                     sh '''ssh -o StrictHostKeyChecking=no ${server} << EOF
-                    npm install --save-dev sonarqube-scanner
-		    npm run sonar
+                    sh npm install --save-dev sonarqube-scanner
+		    sh npm run sonar
                     exit
                     EOF'''
                 }
