@@ -77,7 +77,14 @@ pipeline {
         }
         stage('send notification to discord'){
             steps {
-                discordSend description: "backend notify", footer: "ian notify", link: env.BUILD_URL, result: currentBuild.currentResult, title: JOB_NAME, webhookURL: "https://discord.com/api/webhooks/1232551770614665298/xQdk4sfscxduagJVQ6gdpN1aYAXCIKr-D_L2fALi9pc0qUdcDNTMgq_vHzrxPxpOT-4V"
+                discordSend description: "backend notify",
+	        footer: "ian notify", 
+		link: env.BUILD_URL, 
+		result: currentBuild.currentResult, 
+		title: JOB_NAME,
+		result: buildStatus,
+		text: "The build for ${env.JOB_NAME} has finished with status: ${buildStatus}. Check the details [here](${env.BUILD_URL}).", 
+		webhookURL: "https://discord.com/api/webhooks/1232551770614665298/xQdk4sfscxduagJVQ6gdpN1aYAXCIKr-D_L2fALi9pc0qUdcDNTMgq_vHzrxPxpOT-4V"
             }
         }
     }
