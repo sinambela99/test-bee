@@ -2,8 +2,8 @@ pipeline {
     agent any
     environment{
         credential = 'id_rsa'
-        server = 'ianappserver@103.127.132.172'
-        directory = '/home/ianappserver/literature-backend'
+        server = 'baiksekali@103.150.92.227'
+        directory = '/home/baiksekali/test-bee'
         branch = 'main'
         service = 'backend'
         image = 'iansinambela/backend'
@@ -38,10 +38,10 @@ pipeline {
                 sshagent([credential]) {
                     sh '''ssh -o StrictHostKeyChecking=no ${server} << EOF 
                     cd ${directory}
-                    docker run --name test_fe -p 3000:3000 -d ${image}:${BUILD_NUMBER}
-                    wget --no-verbose --tries=1 --spider localhost:3000
-                    docker stop test_fe
-                    docker rm test_fe
+                    docker run --name test-bee -p 5000:5000 -d ${image}:${BUILD_NUMBER}
+                    wget --no-verbose --tries=1 --spider localhost:5000
+                    docker stop test_bee
+                    docker rm test_bee
                     exit
                     EOF'''
                 }
@@ -75,7 +75,7 @@ pipeline {
         }
         stage('send notification to discord'){
             steps {
-                discordSend description: "backend notify", footer: "ian notify", link: env.BUILD_URL, result: currentBuild.currentResult, title: JOB_NAME, webhookURL: "https://discord.com/api/webhooks/1192097833042579536/qInbfRCW9G8UdivrNlhqeO-AvSijRIdWYbTaGKgKx8sSDR8bCHllZrZ8dPQR3HwKKjau"
+                discordSend description: "backend notify", footer: "ian notify", link: env.BUILD_URL, result: currentBuild.currentResult, title: JOB_NAME, webhookURL: "https://discord.com/api/webhooks/1232551770614665298/xQdk4sfscxduagJVQ6gdpN1aYAXCIKr-D_L2fALi9pc0qUdcDNTMgq_vHzrxPxpOT-4V"
             }
         }
     }
