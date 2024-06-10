@@ -55,7 +55,8 @@ pipeline {
             steps {
                 sshagent([credential]) {
                     sh '''ssh -o StrictHostKeyChecking=no ${server} << EOF
-                    docker compose up -d backend 
+                    sed -i '20c\\    image: ${image}:${BUILD_NUMBER}' docker-compose.yaml
+		    docker compose up -d backend 
                     cd ${directory}
                     exit
                     EOF'''
