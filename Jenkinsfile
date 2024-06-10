@@ -6,7 +6,7 @@ pipeline {
         directory = '/home/baiksekali/test-bee'
         branch = 'main'
         service = 'backend'
-        image = 'iansinambela/backend'
+        image = 'iansinambela/be'
     }
     stages {
         stage('Pull code dari repository'){
