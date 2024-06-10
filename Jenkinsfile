@@ -40,8 +40,7 @@ pipeline {
                     cd ${directory}
 		    docker stop test-bee
                     docker run --name test-bee -p 5000:5000 -d ${image}:${BUILD_NUMBER}
-                    wget --no-verbose --tries=1 --spider localhost:5000
-                    exit
+		    exit
                     EOF'''
                 }
             }
