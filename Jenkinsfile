@@ -82,7 +82,7 @@ pipeline {
 		link: env.BUILD_URL, 
 		result: currentBuild.currentResult.buildStatus, 
 		title: JOB_NAME,
-		text: "The build for env.JOB_NAME has finished with status: buildStatus. Check the details [here](env.BUILD_URL).", 
+		text: "The build for env.JOB_NAME has finished with status: buildStatus. Check the details env.BUILD_URL.", 
 		webhookURL: "https://discord.com/api/webhooks/1232551770614665298/xQdk4sfscxduagJVQ6gdpN1aYAXCIKr-D_L2fALi9pc0qUdcDNTMgq_vHzrxPxpOT-4V"
             }
         }
