@@ -21,17 +21,22 @@ pipeline {
                 }
             }
         }
-        stage('Sonarqube analyze'){
-            steps {
-                sshagent([credential]) {
-                    sh '''ssh -o StrictHostKeyChecking=no ${server} << EOF
-                    sh npm install --save-dev sonarqube-scanner
-		    sh npm run sonar
-                    exit
-                    EOF'''
-                }
-            }
-        }
+     stage("Sonarqube Analysis") {
+           environment {
+    		SCANNER_HOME = tool 'ian'  // sonar-scanner is the name of the tool in the manage jenkins> tool configuration
+   }
+   steps {
+    withSonarQubeEnv(installationName: 'ian') {  //installationName is the name of sonar installation in manage jenkins>configure system
+     bat "%SCANNER_HOME%/bin/sonar-scanner \
+     -Dsonar.projectKey=test-bee \
+     -Dsonar.token=775a041b80fb88e526338c32b2466d76269269b4\
+     -Dsonar.sources=. \
+     -Dsonar.host.url=http://localhost:9000 \
+     -Dsonar.inclusions=index.js \
+     -Dsonar.test.inclusions=index.test.js "
+   		 }
+  	 }
+}
         stage('Building application'){
             steps {
                 sshagent([credential]) {
