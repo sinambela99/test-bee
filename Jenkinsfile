@@ -43,6 +43,7 @@ pipeline {
 		    wget --spider localhost:5000
 		    docker stop test-bee
 		    docker rm test-bee
+		    docker rmi -f ${image}:${BUILD_NUMBER}
 		    exit
                     EOF'''
                 }
