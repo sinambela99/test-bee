@@ -4,6 +4,7 @@ pipeline {
         credential = 'id_rsa'
         server = 'baiksekali@103.150.92.227'
         directory = '/home/baiksekali/test-bee'
+	directory2 = '/home/ianappserver/test-bee'
         branch = 'main'
         service = 'backend'
         image = 'iansinambela/be'
@@ -33,7 +34,7 @@ pipeline {
 	                sh """
 	                ${SCANNER_HOME}/bin/sonar-scanner \
 	                -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
-	                -Dsonar.sources=${directory} \
+	                -Dsonar.sources=${directory2} \
 	                -Dsonar.host.url=${SONARQUBE_URL} \
 	                -Dsonar.login=${SONARQUBE_TOKEN}
 	                """
