@@ -3,8 +3,10 @@ pipeline {
     environment {
         credential = 'id_rsa'
         server = 'baiksekali@103.150.92.227'
+	server2 = 'ianappserver@103.127.132.172'
         directory = '/home/baiksekali/test-bee'
-        branch = 'main'
+        directory2 = '/home/ianappserver/test-bee'
+	branch = 'main'
         service = 'backend'
         image = 'iansinambela/be'
         SONARQUBE_URL = 'http://103.175.219.100:9000'
@@ -31,10 +33,10 @@ pipeline {
 	        script {
 	            sshagent([credential]) {
 	                withSonarQubeEnv('sonarqube') {
-	                    sh '''ssh -o StrictHostKeyChecking=no ${server} << EOF
+	                    sh '''ssh -o StrictHostKeyChecking=no ${server2} << EOF
 	                    ${SCANNER_HOME}/bin/sonar-scanner \
 	                    -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
-	                    -Dsonar.sources=${directory} \
+	                    -Dsonar.sources=${directory2} \
 	                    -Dsonar.host.url=${SONARQUBE_URL} \
 	                    -Dsonar.login=${SONARQUBE_TOKEN}
 			    exit
