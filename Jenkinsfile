@@ -35,8 +35,7 @@ pipeline {
                 script {
                     sshagent([credential]) {
                         // Command untuk memastikan Java 11 diaktifkan
-                        sh '''ssh -o StrictHostKeyChecking=no ${server2} << EOF 
-			${JAVA_HOME}/bin/java -version
+                        sh "ssh -o StrictHostKeyChecking=no ${server2} ${JAVA_HOME}/bin/java -version"
               		${SCANNER_HOME}/bin/sonar-scanner \
                         -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
                         -Dsonar.sources=./ \
