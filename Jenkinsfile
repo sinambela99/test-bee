@@ -1,22 +1,17 @@
 pipeline {
     agent any
-    
     environment {
         credential = 'id_rsa'
         server = 'baiksekali@103.150.92.227'
-        server2 = 'ianappserver@103.127.132.172'
         directory = '/home/baiksekali/test-bee'
-        directory2 = '/home/ianappserver/test-bee'
+	directory2 = '/var/jenkins_home/workspace/test-be'
         branch = 'main'
         service = 'backend'
         image = 'iansinambela/be'
         SONARQUBE_URL = 'http://103.175.219.100:9000'
         SONARQUBE_TOKEN = '7904068fe98aad7c33a53f9fd0bdbef62f166046'
         SONARQUBE_PROJECT_KEY = 'ian'
-        JAVA_HOME = '/usr/lib/jvm/java-11-openjdk-amd64'
-	SCANNER_HOME = tool 'sonarqube'
     }
-    
     stages {
         stage('Pull code dari repository') {
             steps {
@@ -29,28 +24,25 @@ pipeline {
                 }
             }
         }
-        
-         stage('SonarQube Analysis') {
-            steps {
-                script {
-                    sshagent([credential]) {
-                        // Command untuk memastikan Java 11 diaktifkan
-                        sh "ssh -o StrictHostKeyChecking=no ${server2} ${JAVA_HOME}/bin/java -version"
-
-                        // Command SonarQube Scanner
-                        sh """ssh -o StrictHostKeyChecking=no ${server2} << 'EOF'
-                        ${SCANNER_HOME}/bin/sonar-scanner \
-                        -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
-                        -Dsonar.sources=. \
-                        -Dsonar.host.url=${SONARQUBE_URL} \
-                        -Dsonar.login=${SONARQUBE_TOKEN}
-                        exit
-                        EOF"""
-                    }
-                }
-            }
-        }
-
+	stage('SonarQube Analysis') {
+	    environment {
+	        SCANNER_HOME = tool 'sonarqube'
+	    }
+	    steps {
+	        script {
+	            withSonarQubeEnv('sonarqube') {
+	                sh """
+	                ${SCANNER_HOME}/bin/sonar-scanner \
+	                -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
+	                -Dsonar.sources=./ \
+	                -Dsonar.host.url=${SONARQUBE_URL} \
+	                -Dsonar.login=${SONARQUBE_TOKEN}
+			-Dsonar.ce.javaAdditionalOpts="--add-opens java.base/java.lang=ALL-UNNAMED"
+	                """
+	            }
+	        }
+	    }
+	}
         stage('Building application') {
             steps {
                 sshagent([credential]) {
@@ -64,7 +56,6 @@ pipeline {
                 }
             }
         }
-        
         stage('Testing application') {
             steps {
                 sshagent([credential]) {
@@ -80,7 +71,6 @@ pipeline {
                 }
             }
         }
-        
         stage('Deploy aplikasi on top docker') {
             when {
                 expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
@@ -96,7 +86,6 @@ pipeline {
                 }
             }
         }
-        
         stage('Push image to docker hub') {
             steps {
                 sshagent([credential]) {
@@ -109,14 +98,12 @@ pipeline {
                 }
             }
         }
-        
         stage('send notification to discord') {
             steps {
                 discordSend description: "backend notify", footer: "ian notify", link: env.BUILD_URL, result: currentBuild.currentResult, title: JOB_NAME, webhookURL: "https://discord.com/api/webhooks/1232551770614665298/xQdk4sfscxduagJVQ6gdpN1aYAXCIKr-D_L2fALi9pc0qUdcDNTMgq_vHzrxPxpOT-4V"
             }
         }
     }
-    
     post {
         always {
             echo 'This will always run'
@@ -129,3 +116,4 @@ pipeline {
         }
     }
 }
+
