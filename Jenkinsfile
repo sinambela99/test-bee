@@ -34,10 +34,10 @@ pipeline {
 	                sh """
 	                ${SCANNER_HOME}/bin/sonar-scanner \
 	                -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
-			-Dsonar.ce.javaAdditionalOpts="--add-opens java.base/java.lang=ALL-UNNAMED"
 	                -Dsonar.sources=./ \
 	                -Dsonar.host.url=${SONARQUBE_URL} \
 	                -Dsonar.login=${SONARQUBE_TOKEN}
+			-Dsonar.ce.javaAdditionalOpts="--add-opens java.base/java.lang=ALL-UNNAMED"
 	                """
 	            }
 	        }
