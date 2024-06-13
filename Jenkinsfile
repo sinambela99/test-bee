@@ -14,6 +14,7 @@ pipeline {
         SONARQUBE_TOKEN = '7904068fe98aad7c33a53f9fd0bdbef62f166046'
         SONARQUBE_PROJECT_KEY = 'ian'
         JAVA_HOME = '/usr/lib/jvm/java-11-openjdk-amd64'
+	SCANNER_HOME = tool 'sonarqube'
     }
     
     stages {
@@ -37,8 +38,7 @@ pipeline {
                         sh "ssh -o StrictHostKeyChecking=no ${server2} ${JAVA_HOME}/bin/java -version"
                         
                         // Command untuk menjalankan SonarQube Scanner
-                        sh """ssh -o StrictHostKeyChecking=no ${server2} << EOF
-                        ${JAVA_HOME}/bin/java -jar /var/jenkins_home/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonarqube/bin/sonar-scanner \
+			${SCANNER_HOME}/bin/sonar-scanner \
                         -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
                         -Dsonar.sources=. \
                         -Dsonar.host.url=${SONARQUBE_URL} \
