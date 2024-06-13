@@ -28,7 +28,7 @@ pipeline {
 	stage('SonarQube Analysis') {
 	    environment {
 	        SCANNER_HOME = tool 'sonarqube'
-		JAVA_HOME = '/home/ianappserver/usr/lib/jvm/java-11-openjdk-amd64'
+		JAVA_HOME = '/usr/lib/jvm/java-11-openjdk-amd64'
 	    }
 	    steps {
 	        script {
