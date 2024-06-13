@@ -27,13 +27,13 @@ pipeline {
         stage('SonarQube Analysis') {
 	    environment {
 	        SCANNER_HOME = tool 'sonarqube'
-	        JAVA_HOME = '/usr/lib/jvm/java-11-openjdk-amd64'  // Sesuaikan dengan lokasi Java 11 Anda
+	        JAVA_HOME = '/home/ianappserver/usr/lib/jvm/java-11-openjdk-amd64'  
 	    }
 	    steps {
 	        script {
 	            withSonarQubeEnv('sonarqube') {
 	                sh """
-	                ${JAVA_HOME}/bin/java -version  // Memastikan Java 11 diaktifkan
+	                ${JAVA_HOME}/bin/java -version  
 	                ${SCANNER_HOME}/bin/sonar-scanner \
 	                -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
 	                -Dsonar.sources=./ \
