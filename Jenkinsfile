@@ -8,7 +8,7 @@ pipeline {
         service = 'backend'
         image = 'iansinambela/be'
         SONARQUBE_URL = 'http://103.175.219.100:9000'
-        SONARQUBE_TOKEN = '775a041b80fb88e526338c32b2466d76269269b4'
+        SONARQUBE_TOKEN = 'a957a9516da46e3d4d7a6014227877e0aab2cf25'
         SONARQUBE_PROJECT_KEY = 'ian'
     }
     stages {
@@ -31,10 +31,10 @@ pipeline {
                 script {
                     withSonarQubeEnv('ian') {
                         sh '''${SCANNER_HOME}/bin/sonar-scanner \
-                        -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
-                        -Dsonar.login=${SONARQUBE_TOKEN} \
-                        -Dsonar.sources=${directory} \
+		        -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
+		        -Dsonar.sources=${directory} \
                         -Dsonar.host.url=${SONARQUBE_URL}'''
+                        -Dsonar.login=${SONARQUBE_TOKEN} \
                     }
                 }
             }
