@@ -24,22 +24,19 @@ pipeline {
                 }
             }
         }
-	stage('SonarQube Analysis') {
-	    environment {
-	        SCANNER_HOME = tool 'sonarqube'
-	    }
-	    steps {
-	        script {
-	            withSonarQubeEnv('sonarqube') {
-	                sonar-scanner \
-			  -Dsonar.projectKey=ian \
-			  -Dsonar.sources=. \
-			  -Dsonar.host.url=http://103.175.219.100:9000 \
-			  -Dsonar.login=7904068fe98aad7c33a53f9fd0bdbef62f166046
-	            }
-	        }
-	    }
-	}
+        stage('SonarQube Analysis') {
+            environment {
+                SCANNER_HOME = tool 'sonarqube'
+            }
+            steps {
+                script {
+                    def scannerHome = tool name: 'sonarqube', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                    withSonarQubeEnv('sonarqube') {
+                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} -Dsonar.sources=. -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.login=${SONARQUBE_TOKEN}"
+                    }
+                }
+            }
+        }
         stage('Building application') {
             steps {
                 sshagent([credential]) {
