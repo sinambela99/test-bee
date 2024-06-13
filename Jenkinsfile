@@ -36,8 +36,8 @@ pipeline {
 	                -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
 	                -Dsonar.sources=./ \
 	                -Dsonar.host.url=${SONARQUBE_URL} \
-	                -Dsonar.login=${SONARQUBE_TOKEN}
-			-Dsonar.ce.javaAdditionalOpts="--add-opens java.base/java.lang=ALL-UNNAMED"
+	                -Dsonar.login=${SONARQUBE_TOKEN} \
+			-Dsonar.ce.javaAdditionalOpts="--add-opens java.base/java.lang=ALL-UNNAMED" 
 	                """
 	            }
 	        }
