@@ -2,9 +2,8 @@ pipeline {
     agent any
     environment {
         credential = 'id_rsa'
-        remote_server = 'baiksekali@103.150.92.227'
-        remote_directory = '/home/baiksekali/test-bee'
-        local_directory = 'test-bee'
+        server = 'baiksekali@103.150.92.227'
+        directory = '/home/baiksekali/test-bee'
         branch = 'main'
         service = 'backend'
         image = 'iansinambela/be'
@@ -16,64 +15,57 @@ pipeline {
         stage('Pull code dari repository') {
             steps {
                 sshagent([credential]) {
-                    sh '''
-                    ssh -o StrictHostKeyChecking=no ${remote_server} << EOF
-                    cd ${remote_directory}
+                    sh '''ssh -o StrictHostKeyChecking=no ${server} << EOF
+                    cd ${directory}
                     git pull origin ${branch}
                     exit
-                    EOF
-                    scp -o StrictHostKeyChecking=no -r ${remote_server}:${remote_directory} ${WORKSPACE}/${local_directory}
-                    '''
+                    EOF'''
                 }
             }
         }
-        stage('SonarQube Analysis') {
-            environment {
-                SCANNER_HOME = tool 'sonarqube'
-            }
-            steps {
-                script {
-                    withSonarQubeEnv('sonarqube') {
-                        sh """
-                        ${SCANNER_HOME}/bin/sonar-scanner \
-                        -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
-                        -Dsonar.sources=${WORKSPACE}/${local_directory} \
-                        -Dsonar.host.url=${SONARQUBE_URL} \
-                        -Dsonar.login=${SONARQUBE_TOKEN}
-                        """
-                    }
-                }
-            }
-        }
+	stage('SonarQube Analysis') {
+	    environment {
+	        SCANNER_HOME = tool 'sonarqube'
+	    }
+	    steps {
+	        script {
+	            withSonarQubeEnv('sonarqube') {
+	                sh """
+	                ${SCANNER_HOME}/bin/sonar-scanner \
+	                -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
+	                -Dsonar.sources=${directory} \
+	                -Dsonar.host.url=${SONARQUBE_URL} \
+	                -Dsonar.login=${SONARQUBE_TOKEN}
+	                """
+	            }
+	        }
+	    }
+	}
         stage('Building application') {
             steps {
                 sshagent([credential]) {
-                    sh '''
-                    ssh -o StrictHostKeyChecking=no ${remote_server} << EOF
-                    cd ${remote_directory}
+                    sh '''ssh -o StrictHostKeyChecking=no ${server} << EOF
+                    cd ${directory}
                     docker compose down
                     docker compose up -d database
                     docker build -t ${image}:${BUILD_NUMBER} .
                     exit
-                    EOF
-                    '''
+                    EOF'''
                 }
             }
         }
         stage('Testing application') {
             steps {
                 sshagent([credential]) {
-                    sh '''
-                    ssh -o StrictHostKeyChecking=no ${remote_server} << EOF
-                    cd ${remote_directory}
+                    sh '''ssh -o StrictHostKeyChecking=no ${server} << EOF
+                    cd ${directory}
                     docker stop test-bee || true
                     docker run --name test-bee -p 5000:5000 -d ${image}:${BUILD_NUMBER}
                     wget --spider localhost:5000
                     docker stop test-bee
                     docker rm test-bee
                     exit
-                    EOF
-                    '''
+                    EOF'''
                 }
             }
         }
@@ -83,28 +75,24 @@ pipeline {
             }
             steps {
                 sshagent([credential]) {
-                    sh '''
-                    ssh -o StrictHostKeyChecking-no ${remote_server} << EOF
-                    cd ${remote_directory}
+                    sh '''ssh -o StrictHostKeyChecking=no ${server} << EOF
+                    cd ${directory}
                     sed -i 's|image: .*$|image: ${image}:${BUILD_NUMBER}|' docker-compose.yaml
                     docker compose up -d ${service}
                     exit
-                    EOF
-                    '''
+                    EOF'''
                 }
             }
         }
         stage('Push image to docker hub') {
             steps {
                 sshagent([credential]) {
-                    sh '''
-                    ssh -o StrictHostKeyChecking-no ${remote_server} << EOF
-                    cd ${remote_directory}
+                    sh '''ssh -o StrictHostKeyChecking=no ${server} << EOF
+                    cd ${directory}
                     docker push ${image}:${BUILD_NUMBER}
                     docker rmi -f ${image}:${BUILD_NUMBER}
                     exit
-                    EOF
-                    '''
+                    EOF'''
                 }
             }
         }
@@ -126,3 +114,4 @@ pipeline {
         }
     }
 }
+
