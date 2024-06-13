@@ -29,7 +29,7 @@ pipeline {
 	    }
 	    steps {
 	        script {
-	            withSonarQubeEnv('sonarqube') {
+	            withSonarQubeEnv('ian') {
 	                sh """
 	                ${SCANNER_HOME}/bin/sonar-scanner \
 	                -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
