@@ -4,7 +4,7 @@ pipeline {
         credential = 'id_rsa'
         server = 'baiksekali@103.150.92.227'
         directory = '/home/baiksekali/test-bee'
-	directory2 = '/home/ianappserver/test-bee'
+	directory2 = './jenkins_home/workspace/test-be'
         branch = 'main'
         service = 'backend'
         image = 'iansinambela/be'
