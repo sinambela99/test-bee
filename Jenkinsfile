@@ -25,11 +25,11 @@ pipeline {
         }
 	stage('SonarQube Analysis') {
 	    environment {
-	        SCANNER_HOME = tool 'ian'
+	        SCANNER_HOME = tool 'sonarqube'
 	    }
 	    steps {
 	        script {
-	            withSonarQubeEnv('ian') {
+	            withSonarQubeEnv('sonarqube') {
 	                sh """
 	                ${SCANNER_HOME}/bin/sonar-scanner \
 	                -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
