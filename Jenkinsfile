@@ -4,7 +4,6 @@ pipeline {
         credential = 'id_rsa'
         remote_server = 'baiksekali@103.150.92.227'
         remote_directory = '/home/baiksekali/test-bee'
-        local_directory = 'test-bee'
         branch = 'main'
         service = 'backend'
         image = 'iansinambela/be'
@@ -22,26 +21,24 @@ pipeline {
                     git pull origin ${branch}
                     exit
                     EOF
-                    scp -o StrictHostKeyChecking=no -r ${remote_server}:${remote_directory} ${WORKSPACE}/${local_directory}
                     '''
                 }
             }
         }
         stage('SonarQube Analysis') {
-            environment {
-                SCANNER_HOME = tool 'sonarqube'
-            }
             steps {
-                script {
-                    withSonarQubeEnv('sonarqube') {
-                        sh """
-                        ${SCANNER_HOME}/bin/sonar-scanner \
+                sshagent([credential]) {
+                    sh '''
+                    ssh -o StrictHostKeyChecking=no ${remote_server} << EOF
+                    cd ${remote_directory}
+                    sonar-scanner \
                         -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
-                        -Dsonar.sources=${WORKSPACE}/${local_directory} \
+                        -Dsonar.sources=. \
                         -Dsonar.host.url=${SONARQUBE_URL} \
                         -Dsonar.login=${SONARQUBE_TOKEN}
-                        """
-                    }
+                    exit
+                    EOF
+                    '''
                 }
             }
         }
@@ -84,7 +81,7 @@ pipeline {
             steps {
                 sshagent([credential]) {
                     sh '''
-                    ssh -o StrictHostKeyChecking-no ${remote_server} << EOF
+                    ssh -o StrictHostKeyChecking=no ${remote_server} << EOF
                     cd ${remote_directory}
                     sed -i 's|image: .*$|image: ${image}:${BUILD_NUMBER}|' docker-compose.yaml
                     docker compose up -d ${service}
