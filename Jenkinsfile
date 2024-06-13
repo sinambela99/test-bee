@@ -27,7 +27,6 @@ pipeline {
 	stage('SonarQube Analysis') {
 	    environment {
 	        SCANNER_HOME = tool 'sonarqube'
-		directory = '/home/baiksekali/test-bee'
 	    }
 	    steps {
 	        script {
