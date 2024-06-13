@@ -3,9 +3,10 @@ pipeline {
     environment {
         credential = 'id_rsa'
         server = 'baiksekali@103.150.92.227'
+	server2 = 'ianappserver@103.127.132.172'
         directory = '/home/baiksekali/test-bee'
-	directory2 = '/var/jenkins_home/workspace/test-be'
-        branch = 'main'
+        directory2 = '/home/ianappserver/test-bee'
+	branch = 'main'
         service = 'backend'
         image = 'iansinambela/be'
         SONARQUBE_URL = 'http://103.175.219.100:9000'
@@ -24,28 +25,30 @@ pipeline {
                 }
             }
         }
-        stage('SonarQube Analysis') {
+	stage('SonarQube Analysis') {
 	    environment {
 	        SCANNER_HOME = tool 'sonarqube'
-	        JAVA_HOME = '/home/ianappserver/usr/lib/jvm/java-11-openjdk-amd64'  
+		JAVA_HOME = '/home/ianappserver/usr/lib/jvm/java-11-openjdk-amd64'
 	    }
 	    steps {
 	        script {
-	            withSonarQubeEnv('sonarqube') {
-	                sh """
-	                ${JAVA_HOME}/bin/java -version  
-	                ${SCANNER_HOME}/bin/sonar-scanner \
-	                -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
-	                -Dsonar.sources=./ \
-	                -Dsonar.host.url=${SONARQUBE_URL} \
-	                -Dsonar.login=${SONARQUBE_TOKEN}
-	                -Dsonar.ce.javaAdditionalOpts="--add-opens java.base/java.lang=ALL-UNNAMED"
-	                """
+	            sshagent([credential]) {
+	                withSonarQubeEnv('sonarqube') {
+	                    sh '''ssh -o StrictHostKeyChecking=no ${server2} << EOF	
+			    ${JAVA_HOME}/bin/java -version
+	                    ${SCANNER_HOME}/bin/sonar-scanner \
+	                    -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
+	                    -Dsonar.sources=. \
+	                    -Dsonar.host.url=${SONARQUBE_URL} \
+	                    -Dsonar.login=${SONARQUBE_TOKEN}
+			    exit
+	                    EOF'''
+	                }
 	            }
 	        }
 	    }
 	}
-	stage('Building application') {
+        stage('Building application') {
             steps {
                 sshagent([credential]) {
                     sh '''ssh -o StrictHostKeyChecking=no ${server} << EOF
