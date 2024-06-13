@@ -8,8 +8,8 @@ pipeline {
         service = 'backend'
         image = 'iansinambela/be'
         SONARQUBE_URL = 'http://103.175.219.100:9000'
-        SONARQUBE_TOKEN = 'a957a9516da46e3d4d7a6014227877e0aab2cf25'
-        SONARQUBE_PROJECT_KEY = 'ian'
+        SONARQUBE_TOKEN = '7904068fe98aad7c33a53f9fd0bdbef62f166046'
+        SONARQUBE_PROJECT_KEY = 'sonarqube'
     }
     stages {
         stage('Pull code dari repository') {
@@ -29,7 +29,7 @@ pipeline {
 	    }
 	    steps {
 	        script {
-	            withSonarQubeEnv('ian') {
+	            withSonarQubeEnv('sonarqube') {
 	                sh """
 	                ${SCANNER_HOME}/bin/sonar-scanner \
 	                -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
