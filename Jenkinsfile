@@ -23,22 +23,24 @@ pipeline {
                 }
             }
         }
-        stage('SonarQube Analysis') {
-            environment {
-                SCANNER_HOME = tool 'sonarqube'
-            }
-            steps {
-                script {
-                    withSonarQubeEnv('ian') {
-                        sh '''${SCANNER_HOME}/bin/sonar-scanner \
-		        -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
-		        -Dsonar.sources=${directory} \
-                        -Dsonar.host.url=${SONARQUBE_URL}'''
-                        -Dsonar.login=${SONARQUBE_TOKEN} \
-                    }
-                }
-            }
-        }
+	stage('SonarQube Analysis') {
+	    environment {
+	        SCANNER_HOME = tool 'sonarqube'
+	    }
+	    steps {
+	        script {
+	            withSonarQubeEnv('ian') {
+	                sh """
+	                ${SCANNER_HOME}/bin/sonar-scanner \
+	                -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
+	                -Dsonar.sources=${directory} \
+	                -Dsonar.host.url=${SONARQUBE_URL} \
+	                -Dsonar.login=${SONARQUBE_TOKEN}
+	                """
+	            }
+	        }
+	    }
+	}
         stage('Building application') {
             steps {
                 sshagent([credential]) {
