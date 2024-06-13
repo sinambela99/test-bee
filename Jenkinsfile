@@ -32,14 +32,11 @@ pipeline {
 	    steps {
 	        script {
 	            withSonarQubeEnv('sonarqube') {
-	                sh """
-	                ${SCANNER_HOME}/bin/sonar-scanner \
-	                -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
-	                -Dsonar.sources=${directory} \
-	                -Dsonar.host.url=${SONARQUBE_URL} \
-	                -Dsonar.login=${SONARQUBE_TOKEN} \
-			-Dsonar.ce.javaAdditionalOpts="--add-opens java.base/java.lang=ALL-UNNAMED" 
-	                """
+	                sonar-scanner \
+			  -Dsonar.projectKey=ian \
+			  -Dsonar.sources=. \
+			  -Dsonar.host.url=http://103.175.219.100:9000 \
+			  -Dsonar.login=7904068fe98aad7c33a53f9fd0bdbef62f166046
 	            }
 	        }
 	    }
