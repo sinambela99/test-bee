@@ -11,6 +11,10 @@ pipeline {
         SONARQUBE_TOKEN = 'squ_bee5bcd4e1f2791fc97d006e293fd2c31da73b5a'
         SONARQUBE_PROJECT_KEY = 'ian'
     }
+   
+    tools {
+        nodejs 'NodeJS' // Name of the NodeJS installation configured in Jenkins
+    }
     stages {
         stage('Pull code dari repository') {
             steps {
