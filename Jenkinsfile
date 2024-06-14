@@ -9,7 +9,7 @@ pipeline {
         image = 'iansinambela/be'
         SONARQUBE_URL = 'http://103.175.219.100:9000'
         SONARQUBE_TOKEN = 'squ_bee5bcd4e1f2791fc97d006e293fd2c31da73b5a'
-        SONARQUBE_PROJECT_KEY = 'ian'
+        SONARQUBE_PROJECT_KEY = 'sonarqube'
     }
    
     tools {
